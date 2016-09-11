@@ -11,7 +11,7 @@ print("Connection on {}".format(port))
 count = 6
 socket.send("\nHey my name is Darel!\n".encode())
 
-socket.send("\nHack this server 192.168.1.2\n".encode())
+socket.send("\nTesting the client API\n".encode())
 
 print("Close")
 socket.close()
