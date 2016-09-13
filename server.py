@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import socket
 from _thread import start_new_thread
 
@@ -6,7 +8,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.bind(('', 7125))
 sock.listen(1000)
 #Printing that the server started
-print("\nServer starded \n")
+print("\nAID Server starded\n")
 
 #Creating a function for each client
 def new_client(conn):
