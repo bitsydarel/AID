@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <title>AID SERVER</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+<body>
+<div class="container">
+    <video playsinline autoplay muted loop id="bgvid">
+        <source src="{{ url_for('static', filename='matrix.mp4') }}" type="video/mp4" />
+        <source src="{{ url_for('static', filename='matrix.ogv') }}" type="video/ogg" />
+        <source src="{{ url_for('static', filename='matrix.webm') }}" type="video/webm" />
+    </video>
+    <div class="text"><h2>Welcome To AID server </h2></div>
+</div>
+<div id="user_creation"     align=center>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <label>Username</label><br>
+        {{ form.username }}<br>
+        <label><br>Password</label>
+        <br>{{ form.password }}
+        <label><br>Confirm Password</label>
+        <br>{{ form.confirm }}<br><br>
+        {{ form.submit }}
+    </form>
+</div>
+</body>
+</html>
