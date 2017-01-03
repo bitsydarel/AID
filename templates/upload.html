@@ -1,0 +1,13 @@
+{% extends 'layouts/themes.html' %}
+{% block content %}
+<div class="uploader" id="uploader" >
+    <form method="POST" id="form-uploader" name="form-uploader" enctype="multipart/form-data">
+        {{ form.the_file(enctype="multipart/form-data") }}
+        {% for error in form.the_file.erros %}
+            {{ error }}
+        {% endfor %}
+        <br><br>
+        {{ form.submit }}
+    </form>
+</div>
+{% endblock %}

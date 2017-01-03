@@ -1,0 +1,15 @@
+{% if security.registerable or security.recoverable or security.confirmable %}
+<h2 style="color:#ADFF2F; margin-top: 0%">Menu</h2>
+<ul>
+  <li style="color:#ADFF2F"><input type="submit" onclick="window.location='{{ url_for_security('login') }}{% if 'next' in request.args %}?next={{ request.args.next|urlencode }}{% endif %}';" value="Login"></input></li>
+  {% if security.registerable %}
+  <br><li style="color:#ADFF2F"><input type="submit" onclick="window.location='{{ url_for_security('register') }}{% if 'next' in request.args %}?next={{ request.args.next|urlencode }}{% endif %}';" value="Register"></input><br/></li>
+  {% endif %}
+  {% if security.recoverable %}
+  <li style="color:#ADFF2F"><input type="submit" onclick="window.location='{{ url_for_security('forgot_password') }}';" value="Forgot password"></input><br/></li>
+  {% endif %}
+  {% if security.confirmable %}
+  <li style="color:#ADFF2F"><input type="submit" onclick="window.location='{{ url_for_security('send_confirmation') }}';" value="Confirm account"></input></li>
+  {% endif %}
+</ul>
+{% endif %}

@@ -1,20 +1,7 @@
-<!DOCTYPE html>
-<html>
-    <head>
-    <meta charset="utf-8">
-    <title>AID SERVER</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <meta http-equiv="refresh" content="10; url={{ url_for('create_user') }}" />
-    </head>
-<body>
-<div class="container">
-    <video playsinline autoplay muted loop id="bgvid">
-        <source src="{{ url_for('static', filename='matrix.mp4') }}" type="video/mp4" />
-        <source src="{{ url_for('static', filename='matrix.ogv') }}" type="video/ogg" />
-        <source src="{{ url_for('static', filename='matrix.webm') }}" type="video/webm" />
-    </video>
-    <div class="text"><h2>Welcome To AID server </h2></div>
-    <div class="Succes" id='success'><h1>Your account has been created successfully and is ready to use</h1></div>
-</div>
-</body>
-</html>
+{% extends 'layouts/themes.html' %}
+{% block custom_meta %}
+<meta http-equiv="refresh" content="3;url={{ url_for('create_users')}}" />
+{% endblock %}
+{% block content %}
+<div class="success" id='success'><h1>Your account has been created successfully and is ready to use</h1></div>
+{% endblock %}

@@ -6,7 +6,9 @@
 from flask import Flask, flash,  render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import Form
-from wtforms import StringField, PasswordField, SubmitField, validators
+
+from wtforms import TextAreaField, FileField, StringField, PasswordField, SubmitField, validators, ValidationError
+
 from wtforms.validators import DataRequired
 #from flask_socketio import SocketIO, send
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
@@ -15,7 +17,7 @@ from datetime import datetime
 from jinja2 import Environment
 import socket
 import cgi
-
+import os
 
 
 #defining config
@@ -58,10 +60,10 @@ class ExtendedRegisterForm(RegisterForm):
         if not validation:
             return False
 
-        self.user = User.query.filter_by(
+        user = User.query.filter_by(
             username=self.username.data).first()
-        if self.user is not None:
-            error = ('Username already exists')
+        if user is not None:
+            self.username.error.append('Username already exists')
             return False
         
         return True
@@ -87,8 +89,21 @@ class ExtendedLoginForm(LoginForm):
         if self.user is not None:
             return True
         else:
+            self.username.errors.append("Wrong Username!")
             return False
             
+class SendcommandForm(Form):
+    newCommandContent = TextAreaField("Enter your command", [ Required()])
+    newCommandSend = SubmitField(label="send")
+
+class UploadFileS(Form):
+    the_file = FileField("File to Upload", [Required()])
+    submit = SubmitField("Upload")
+
+    def validate_file(self, field):
+        if field.data.filename == None or field.data.filename == "":
+            raise ValidationError("Please select a file")
+
 
 #creating user in database
 # Define models
@@ -135,9 +150,18 @@ def index():
     return render_template('index.html')
 
 #create user page
-@app.route('/create_users', methods=['GET', 'POST'])
-def create_users():
-    return render_template('create_users.html', form=form)
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    global form
+    form = UploadFileS()
+    if request.method == 'POST':
+        image = 'uploads/' + form.the_file.data.filename
+        form.the_file.data.save(os.path.join(app.static_folder, image))
+        image = os.path.join(app.static_folder, image)
+        uploaderfunc(image)
+        return redirect(url_for('aid_bot'))
+    return render_template('upload.html', form=form)
 
 
 #bot channel page
@@ -145,7 +169,11 @@ def create_users():
 #@login_required
 def aid_bot(answer=None):
     global sock, client, address, command, respond, received
+
+    form = SendcommandForm()
     if request.method == 'POST':
+        if request.form["newCommandContent"] == "UPLOAD":
+            return redirect(url_for('upload'))
         try:
             send_command()
         except AttributeError:
@@ -159,9 +187,10 @@ def aid_bot(answer=None):
         client, address = sock.accept()
 
     if respond == None:
-        return render_template('aid_bot.html', answer=respond)
+        return render_template('aid_bot.html', answer=respond, form=form)
     else:
-        return render_template('aid_bot.html', r_time=received, cmd=command.decode(), answer=respond.split('\n'))
+        return render_template('aid_bot.html', form=form, r_time=received, cmd=command.decode(), answer=respond.split('\n'))
+
 
 def send_command():
     global client, respond, address, command, received
@@ -183,8 +212,16 @@ def send_command():
             database_check.received_at = received
         db.session.commit()
         print(respond)
-        #socketio.emit('data', {'data': cgi.escape(message)}, namespace="/command_send")
 
+def uploaderfunc(the_file):
+    global client, respond, command, form
+
+    command = str("UPLOAD "+form.the_file.data.filename).encode()
+    client.send(command)
+    with open(the_file, "rb") as f:
+        l = f.read()
+        client.send(l)
+    respond = "FILE UPLOADED SUCCESFULLY"
 
 def launching():
     global sock

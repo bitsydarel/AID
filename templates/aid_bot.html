@@ -1,32 +1,30 @@
-<!DOCTYPE html>
-<html>
-    <head>
-    <meta charset="utf-8">
-    <title>AID SERVER</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    </head>
-<body>
-<div class="container">
-    <video playsinline autoplay muted loop id="bgvid">
-        <source src="{{ url_for('static', filename='matrix.mp4') }}" type="video/mp4" />
-        <source src="{{ url_for('static', filename='matrix.ogv') }}" type="video/ogg" />
-        <source src="{{ url_for('static', filename='matrix.webm') }}" type="video/webm" />
-    </video>
-    <div class="text"><h2>Welcome To AID server </h2></div>
-</div>
-<div id='outputBox'>
-    <section id='outputArea'>
+{% extends 'layouts/themes.html' %}
+{% block content %}
+<div id="outputBox">
+    <section id="outputArea">
+            {% if answer %}
+                <div id="data_output"></div>
+                <h3 style="color:#ADFF2F"># {{ cmd }}: </h3><h3 style="text-align: right; color:#ADFF2F;">{{ r_time }}</h3>
+                {% for word in answer %}
+                    <h3><span id="message-output">{{ word }} </span></h3>
+                {% endfor %}
+            {% endif %}
     </section>
-    <section id='commandSendingArea'>
-        <div id='chatEnabled'>
-            <form id='newCommand' name='newCommand' class='newCommand' action="" onsubmit="return false">
+    <section id="commandSendingArea">
+        <div id="chatEnabled">
+            <form method="POST" id="newCommand" name="newCommand" class="newCommand">
                 <section class="left">
-                    <textarea name='newCommandContent' id='newCommandContent'
-                    placeholder="Enter your command here"></textarea>
+                    {{ form.newCommandContent(id="newCommandContent", placeholder="Enter your command here") }}
+                    {% for error in form.newCommandContent.erros %}
+                        {{ error }}
+                    {% endfor %}
                 </section>
-                <section class='right'>
-                    <input id='send' type="submit" name="newCommandSend" value="Send"/>
+                <section class="right">
+                    {{ form.newCommandSend(style="background-color:#000000; color:#ADFF2F; border: #000000;") }}
+                    {{ form.hidden_tag() }}
                 </section>
+            </form>
+        </div>
+    </section>
 </div>
-</body>
-</html>
+{% endblock %}
